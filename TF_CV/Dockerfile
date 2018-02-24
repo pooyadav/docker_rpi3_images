@@ -51,8 +51,11 @@ RUN cd /tmp/opencv-$OPENCV_VERSION && \
 	mkdir build && \
 	cd build && \
 	cmake -D CMAKE_BUILD_TYPE=RELEASE \
-	-D CMAKE_INSTALL_PREFIX=/usr/local \
 	-D INSTALL_C_EXAMPLES=ON \
+	-DCMAKE_INSTALL_PREFIX=$(python3.4 -c "import sys; print(sys.prefix)") \
+	-DPYTHON_EXECUTABLE=$(which python3.4) \
+	-DPYTHON_INCLUDE_DIR=$(python3.4 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
+	-DPYTHON_PACKAGES_PATH=$(python3.4 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 	-D BUILD_PYTHON_SUPPORT=ON \
 	-D BUILD_NEW_PYTHON_SUPPORT=ON \
 	-D INSTALL_PYTHON_EXAMPLES=ON \
