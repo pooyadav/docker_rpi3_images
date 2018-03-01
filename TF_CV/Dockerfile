@@ -10,7 +10,9 @@ gfortran \
 libblas-dev \
 liblapack-dev \
 libatlas-base-dev \ 
-libjpeg-dev \
+libjpeg8-dev \
+libjpeg8 \
+libjpeg8-dbg \
 libtiff5-dev \
 libjasper-dev \
 libpng12-dev \
@@ -21,9 +23,7 @@ libv4l-dev \
 libxvidcore-dev \
 libx264-dev \
 libgtk2.0-dev \
-python3-dev \
-python3-pip \
-python3-numpy
+python3-dev 
 RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
 wget --quiet https://repo.continuum.io/miniconda/Miniconda-latest-Linux-armv7l.sh -O ~/miniconda.sh && \
 bash ~/miniconda.sh -b -p /opt/conda && \
@@ -31,7 +31,12 @@ rm ~/miniconda.sh
 ENV PATH /opt/conda/bin:$PATH
 RUN conda install -n "root" --yes --quiet python=3.4
 RUN conda install pip && \
-conda install -y pillow
+conda install -y pillow && \
+conda install -y numpy && \
+conda install scipy && \
+conda install scikit-learn && \
+conda install six && \
+conda install pandas 
 COPY tensorflow-1.1.0-cp34-cp34m-linux_armv7l.whl .
 RUN pip install tensorflow-1.1.0-cp34-cp34m-linux_armv7l.whl
 
@@ -51,11 +56,11 @@ RUN cd /tmp/opencv-$OPENCV_VERSION && \
 	mkdir build && \
 	cd build && \
 	cmake -D CMAKE_BUILD_TYPE=RELEASE \
-	-D INSTALL_C_EXAMPLES=ON \
 	-DCMAKE_INSTALL_PREFIX=$(python3.4 -c "import sys; print(sys.prefix)") \
 	-DPYTHON_EXECUTABLE=$(which python3.4) \
 	-DPYTHON_INCLUDE_DIR=$(python3.4 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
-	-DPYTHON_PACKAGES_PATH=$(python3.4 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+	-DPYTHON_PACKAGES_PATH=$(python3.4 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
+	-DPYTHON3_NUMPY_INCLUDE_DIRS=/opt/conda/lib/python3.4/site-packages/numpy/core/include \
 	-D BUILD_PYTHON_SUPPORT=ON \
 	-D BUILD_NEW_PYTHON_SUPPORT=ON \
 	-D INSTALL_PYTHON_EXAMPLES=ON \
